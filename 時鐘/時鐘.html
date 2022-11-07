@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- location.href="https://adobe.com"  -->
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+  <!-- 時鐘數字字體 -->
+  <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
+  <!-- 時間的字體 -->
+  <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/all.css">
+
+  <style>
+    body {
+      margin: 0;
+      background-image: url(./morning.jpg);
+      background-repeat: no-repeat;
+      background-size: cover;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      margin: auto;
+      background-attachment: fixed;
+      /* filter: hue-rotate(100deg); */
+    }
+
+    #clock {
+      background: rgba(255, 255, 255, 0.1);
+      width: 300px;
+      height: 300px;
+      margin: auto;
+      position: relative;
+      border-radius: 50%;
+      border: 3px solid rgb(255, 255, 255);
+      backdrop-filter: blur(5px);
+      /* 垂直置中，時鐘高度是300，各分150給上下 */
+      top: calc(50vh - 150px);
+      font-family: 'Pathway Gothic One', sans-serif;
+      /* box-shadow:
+        0px 0px 5px rgb(4, 155, 14),
+        0px 0px 25px rgba(16, 143, 25, 0.8),
+        0px 0px 50px rgba(4, 107, 11, 0.5),
+        0px 0px 100px rgba(2, 53, 5, 0.3); */
+    }
+
+    #clock_center {
+      width: 7px;
+      height: 7px;
+      background: rgb(255, 255, 255);
+      position: absolute;
+      top: calc(50% - 3.5px);
+      left: calc(50% - 3.5px);
+      border-radius: 50%;
+      transform-origin: left center;
+      z-index: 10;
+    }
+
+    #hour {
+      width: 0;
+      height: 1px;
+      border: 7px solid transparent;
+      border-right: 6px solid rgb(0, 92, 76);
+      position: absolute;
+      /* left已經移動16px了 所以想要旋轉的origin要釘在left-16px的地方 */
+      transform-origin: 16px 50%;
+      top: calc(50% - 7.5px);
+      left: calc(50% - 16px);
+      z-index: 7;
+    }
+
+    #hour::after {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: -7px;
+      width: 0;
+      height: 1px;
+      border: 7px solid transparent;
+      border-left: 70px solid rgb(0, 92, 76);
+      z-index: 7;
+    }
+
+    #minute {
+      width: 0;
+      height: 1px;
+      border: 7px solid transparent;
+      border-right: 6px solid black;
+      position: absolute;
+      transform-origin: 16px 50%;
+      top: calc(50% - 7.5px);
+      left: calc(50% - 16px);
+      z-index: 8;
+    }
+
+    #minute::after {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: -7px;
+      width: 0;
+      height: 1px;
+      border: 7px solid transparent;
+      border-left: 115px solid black;
+      z-index: 8;
+    }
+
+    #second {
+      position: absolute;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      border-top: 2px solid transparent;
+      border-left: 160px solid rgb(189, 0, 0);
+      height: 1px;
+      width: 0px;
+      top: calc(50% - 2.5px);
+      left: calc(50% - 20px);
+      transform-origin: 20px 50%;
+      z-index: 9;
+    }
+
+    /*時鐘內的物件*/
+    .time-wrap {
+      color: #226922;
+      font-size: 30px;
+      text-shadow:
+        3px 5px 3px rgba(66, 68, 56, 0.647),
+        0px 0px 5px rgb(121, 178, 203),
+        0px 0px 15px rgba(163, 98, 12, 0.5);
+    }
+
+    .dial-time {
+      position: absolute;
+      font-size: 40px;
+      top: calc(50%);
+      left: calc(50%);
+      /* transform: translateX(-23.5px); */
+    }
+
+    /* 12點 */
+    .dial-time:nth-child(1) {
+      transform: translateX(-15.865px) translateY(-148.2px);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 1點 */
+    .dial-time:nth-child(2) {
+      /* I寬度:8.25*46.4
+        先移回中心 X:-4.125px, Y:-23.2px
+        半徑=125px X_new=(125*cos(60)-4.125), Y_new=(-23.2-125*sin(60)) */
+      transform: translateX(58.375px) translateY(-131.453px) rotate(30deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 2點 */
+    .dial-time:nth-child(3) {
+      transform: translateX(100px) translateY(-85.7px) rotate(60deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 3點 */
+    .dial-time:nth-child(4) {
+      /* right: 25px;
+      top: 39%;
+      margin-left: 120px;
+      transform: rotate(90deg); */
+
+      transform: translateX(112.135px) translateY(-23.2px) rotate(90deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 4點 */
+    .dial-time:nth-child(5) {
+      transform: translateX(96.288px) translateY(39.3px) rotate(300deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 5點 */
+    .dial-time:nth-child(6) {
+      transform: translateX(54.665px) translateY(85.053px) rotate(330deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 6點 */
+    .dial-time:nth-child(7) {
+      /* bottom: 5px;
+      left: 52%;
+      margin-left: -15px;
+      transform: rotate(360deg); */
+
+      transform: translateX(-11.965px) translateY(101.8px);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 7點 */
+    .dial-time:nth-child(8) {
+      transform: translateX(-78.58px) translateY(85.053px) rotate(30deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 8點 */
+    .dial-time:nth-child(9) {
+      transform: translateX(-128.453px) translateY(39.3px) rotate(60deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 9點 */
+    .dial-time:nth-child(10) {
+      /* left: 38px;
+      top: 44%;
+      margin-left: -25px;
+      */
+      transform: translateX(-136.745px) translateY(-23.2px) rotate(270deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 10點 */
+    .dial-time:nth-child(11) {
+      transform: translateX(-115.878px) translateY(-85.7px) rotate(300deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 11點 */
+    .dial-time:nth-child(12) {
+      transform: translateX(-74.2455px) translateY(-131.453px) rotate(330deg);
+      color: aliceblue;
+      /* background: #333; */
+    }
+
+    /* 數字顯示的時間日期 */
+    #date {
+      position: absolute;
+      margin: auto;
+      top: calc(50% - 250px);
+      left: 50%;
+      transform: translate(-50%);
+      font-family: 'Monoton', cursive;
+      font-size: 25px;
+      font-weight: 500;
+      color: rgb(255, 255, 255);
+    }
+
+    #time {
+      position: absolute;
+      margin: auto;
+      top: calc(50% - 210px);
+      left: 50%;
+      transform: translate(-50%);
+      font-family: 'Monoton', cursive;
+      font-size: 25px;
+      font-weight: 500;
+      color: rgb(253, 254, 255);
+    }
+
+    /* 自製音樂播放鍵 */
+    /* #btn-music {
+      width: 300px;
+      height: 300px;
+      display: inline;
+      top: calc(100% - 300px);
+      left: calc(100% - 1000px);
+      position: absolute;
+    }
+
+    button {
+      width: 30px;
+      height: 25px;
+      border: 2px solid rgb(244, 244, 245);
+      background: rgba(255, 255, 255, 0.582);
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      padding: 5px;
+    }
+
+    button:focus {
+      background-color: #eee;
+      transition-delay: .1s;
+    }
+
+    #musicBtnPlay {
+      top: 100%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    } */
+
+
+    #audio {
+      width: 10px;
+      height: 10px;
+      top: calc(100% - 285px);
+      left: calc(100% - 1100px);
+      position: absolute;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 自製音樂播放鍵 -->
+  <!-- <div id="btn-music">
+    <button id="musicBtnPlay"><i class=" fa-solid fa-play"></i></button>
+    <button id="musicBtnPause"><i class="fa-solid fa-pause"></i></button>
+  </div>
+  <audio id="audio" src="./無版權音樂_作者 Chris Haugen.mp3"></audio> -->
+  <!-- 音樂 -->
+  <div id="audio">
+    <audio controls>
+      <source src="./無版權音樂_作者 Chris Haugen.mp3">
+    </audio>
+  </div>
+
+  <div id="clock">
+    <div id="hour"></div>
+    <div id="minute"></div>
+    <div id="second"></div>
+    <!-- <div id="second"><img src="./SECOND3.png"></div> -->
+    <!-- 時鐘內數字 -->
+    <div id="clock_center"></div>
+    <div class="time-wrap">
+      <div class="dial-time">XII</div>
+      <div class="dial-time">I</div>
+      <div class="dial-time">II</div>
+      <div class="dial-time">III</div>
+      <div class="dial-time">IV</div>
+      <div class="dial-time">V</div>
+      <div class="dial-time">VI</div>
+      <div class="dial-time">VII</div>
+      <div class="dial-time">VIII</div>
+      <div class="dial-time">IX</div>
+      <div class="dial-time">X</div>
+      <div class="dial-time">XI</div>
+    </div>
+    <!-- 新增 -->
+  </div>
+  <div id="date"></div>
+  <div id="time"></div>
+  <div id="week"></div>
+
+  <script>
+    const hour = document.getElementById('hour')
+    const minute = document.getElementById('minute')
+    const second = document.getElementById('second')
+    const week = document.getElementById('week')
+
+    // 音樂
+    const musicBtnPlay = document.getElementById('musicBtnPlay')
+    const audio = document.getElementById('audio')
+    const musicBtnPause = document.getElementById('musicBtnPause')
+
+    // 補0: '1'.padstart(2,'0') => '01'。 '1'.padend()
+    setInterval(() => {
+      const date = new Date()
+      // 每天24小時，一個圓360度，每時
+      hour.style.transform = `rotate(${date.getHours() * 30 - 90 + date.getMinutes() * 0.5}deg)`
+      // 每小時60分鐘，一個圓360度，因0分時。div是橫的，所以要把90度減回來
+      minute.style.transform = `rotate(${date.getMinutes() * 6 - 90}deg)`
+      second.style.transform = `rotate(${date.getSeconds() * 6 - 90}deg)`
+    }, 1000);
+
+    const date = document.querySelector("#date");
+    const time = document.querySelector('#time');
+    function updateDate() {
+      let newDate = new Date();
+      let year = newDate.getFullYear();
+      let month = parseInt(newDate.getMonth().toString().padStart(2, '0')) + 1;
+      let dates = newDate.getDate().toString().padStart(2, '0');
+      let hour = newDate.getHours().toString().padStart(2, '0');
+      let mins = newDate.getMinutes().toString().padStart(2, '0');
+      let sec = newDate.getSeconds().toString().padStart(2, '0');
+      let day = newDate.getDay();
+      var day_arr = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      date.textContent = `${year} - ${month} - ${dates} - ${day_arr[day]}`;
+      time.textContent = hour + ':' + mins + ':' + sec;
+    }
+    setInterval(updateDate, 1000);
+
+    //------------------------新增
+    // const bodyBg = document.querySelector('')
+    function backgroundChange() {
+      let newDate = new Date();
+      let hourNum = newDate.getHours();
+      let minNum = newDate.getMinutes();
+      const bg = ["./morning.jpg", "./afternoon.jpg", "./night.jpg"];
+      if (hourNum >= 8 && hourNum < 17) {
+        document.body.style.background = 'url(' + bg[0] + ')';
+      }
+      else if (hourNum >= 5 && hourNum < 7 || hourNum >= 17 && hourNum < 19) {
+        document.body.style.background = 'url(' + bg[1] + ')';
+      }
+      else {
+        document.body.style.background = 'url(' + bg[2] + ')';
+      }
+      // if(minNum>=28){
+      //   document.body.style.background='url('+bg[2]+')';
+      // }
+      document.body.style.backgroundSize = "cover";
+      document.body.style.backgroundRepeat = "no-repeat";
+      document.body.style.backgroundAttachment = "fixed";
+    }
+    setInterval(backgroundChange, 1000);
+
+    // 自製音樂播放鍵 
+    // musicBtnPlay.addEventListener('click', function () {
+    //   audio.play()
+    // })
+    // musicBtnPause.addEventListener('click', function () {
+    //   audio.pause()
+    // })
+
+
+  </script>
+
+</body>
+
+</html>
